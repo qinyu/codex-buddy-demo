@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "project_root": "/Users/qinyu/.worktrees/haitian-pw/guides-demo/artifacts/guide-production/codex-buddy/codex-buddy-demo-ZK7Uhv/code",
+  "profile_path": "docs/product-workflow/project-profile.md",
+  "freshness": {
+    "generated_at": "2026-10-27T21:56:23.387Z",
+    "git_commit": "90851a123d760790d8b7f1a41c0b58cabd3b1939"
+  },
+  "workflow_policy": {
+    "config_strength": "strong_with_explicit_override",
+    "domain_role": "未确认",
+    "product_mode": "unknown",
+    "clarification_style": "single_question",
+    "mode_detection": "inferred_unconfirmed",
+    "project_wiki": "optional",
+    "repo_wiki": "prefer_existing_or_generate_missing",
+    "code_exploration": "required",
+    "prototype_route": "auto",
+    "test_automation": "required",
+    "unit_test_infra_check": "required",
+    "portal_sync": "off"
+  }
+}
