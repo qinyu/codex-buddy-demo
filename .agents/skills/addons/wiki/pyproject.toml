@@ -1,0 +1,23 @@
+[project]
+name = "code-wiki"
+version = "0.1.0"
+description = "code-wiki glue: workspace json, per-git graphs, query hits"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+code-wiki = "code_wiki.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = ["pytest>=8.3"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.uv]
+package = true

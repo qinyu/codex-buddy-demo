@@ -1,0 +1,13 @@
+{
+  "version": "0.9.3",
+  "project": {
+    "name": "codex-buddy",
+    "display_name": "Codex Buddy 桌面硬件伴侣",
+    "repo_url": "https://github.com/qinyu/codex-buddy-demo.git"
+  },
+  "workflow_policy": {
+    "product_mode": "existing_iterative",
+    "code_exploration": "allowed",
+    "portal_sync": "off"
+  }
+}
