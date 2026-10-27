@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "current_stage": "develop",
+  "run_mode": "lite",
+  "stages": {
+    "clarify": { "status": "Not Applicable", "reason": "单一格式规则已由用户明确，轻量切片裁剪澄清阶段。" },
+    "project-wiki": { "status": "Not Applicable", "reason": "已有仓库 Wiki 导航，本需求局部格式化无需新增切片 Wiki。" },
+    "prd": { "status": "Reviewed", "reviewed_by": "用户", "reviewed_at": "2026-10-28" },
+    "prototype": { "status": "Not Applicable", "reason": "无 UI 或交互变更。" },
+    "stitch-prototype": { "status": "Not Applicable", "reason": "无 UI 或交互变更。" },
+    "test-cases": { "status": "Not Applicable", "reason": "纯函数边界直接纳入现有单元测试，无需独立用例产物。" },
+    "test-automation": { "status": "Not Applicable", "reason": "无新增自动化系统范围；使用既有 Python unittest，并在 PRD 记录 explicit_override。" },
+    "technical-solution": { "status": "Not Applicable", "reason": "无新模块、接口、权限或数据边界变化。" },
+    "development-plan": { "status": "Draft" },
+    "start-implement": { "status": "Not Applicable", "reason": "lite 轻量流程不单列开工记录。" },
+    "develop": { "status": "Draft" }
+  },
+  "explicit_overrides": [
+    {
+      "policy": "workflow_policy.test_automation",
+      "reason": "沿用现有 Python unittest，不初始化独立自动化测试基建。",
+      "risk": "现有测试命令可能受当前 Python 环境或依赖影响。",
+      "recovery": "开发阶段运行指定 unittest；若因环境失败则记录阻断并重新确认是否需要初始化测试环境。"
+    }
+  ]
+}

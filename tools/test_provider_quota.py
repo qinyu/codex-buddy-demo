@@ -8,6 +8,7 @@ import unittest
 from codex_usage_ble_bridge import (
     UsageSnapshot,
     bar_is_visible,
+    format_reset_countdown,
     map_provider_quota,
     normalize_reset_at,
     parse_balance_display,
@@ -16,6 +17,23 @@ from codex_usage_ble_bridge import (
     PRIMARY_RESET_WINDOW_SEC,
     SECONDARY_RESET_WINDOW_SEC,
 )
+
+
+class ResetCountdownFormattingTests(unittest.TestCase):
+    def test_should_format_days_and_remaining_hours_if_duration_exceeds_one_day(self) -> None:
+        self.assertEqual(format_reset_countdown(90061), "1d 01h")
+
+    def test_should_format_hours_and_remaining_minutes_if_duration_exceeds_one_hour(self) -> None:
+        self.assertEqual(format_reset_countdown(7261), "2h 01m")
+
+    def test_should_format_minutes_if_duration_is_less_than_one_hour(self) -> None:
+        self.assertEqual(format_reset_countdown(3599), "59m")
+
+    def test_should_format_zero_minutes_if_duration_is_less_than_one_minute(self) -> None:
+        self.assertEqual(format_reset_countdown(59), "0m")
+
+    def test_should_show_reset_due_if_duration_is_negative(self) -> None:
+        self.assertEqual(format_reset_countdown(-1), "Reset due")
 
 
 class ProviderQuotaMappingTests(unittest.TestCase):

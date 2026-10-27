@@ -1227,6 +1227,16 @@ def normalize_reset_at(value: Any) -> int:
     return ts
 
 
+def format_reset_countdown(seconds_left: int) -> str:
+    if seconds_left < 0:
+        return "Reset due"
+    if seconds_left >= 86400:
+        return f"{seconds_left // 86400}d {(seconds_left // 3600) % 24:02d}h"
+    if seconds_left >= 3600:
+        return f"{seconds_left // 3600}h {(seconds_left // 60) % 60:02d}m"
+    return f"{seconds_left // 60}m"
+
+
 def whole_amount_text(value: Any) -> str | None:
     try:
         amount = float(value)
