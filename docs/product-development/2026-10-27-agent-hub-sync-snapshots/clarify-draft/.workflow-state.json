@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "run_mode": "stage-gated",
+  "current_stage": "clarify",
+  "stages": {
+    "clarify": {
+      "status": "Draft",
+      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "approval": "pending-human"
+    },
+    "prd": {
+      "status": "Draft",
+      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "approval": "pending-human"
+    },
+    "prototype": {
+      "status": "Draft",
+      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "approval": "pending-human"
+    },
+    "technical-solution": {
+      "status": "Draft",
+      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "approval": "pending-human"
+    },
+    "test-cases": {
+      "status": "Draft",
+      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "approval": "pending-human"
+    },
+    "test-automation": {
+      "status": "Draft",
+      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "approval": "pending-human"
+    },
+    "development-plan": {
+      "status": "Draft",
+      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "approval": "pending-human"
+    },
+    "start-implement": {
+      "status": "Draft",
+      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "approval": "pending-human"
+    },
+    "develop": {
+      "status": "Draft",
+      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "approval": "pending-human"
+    },
+    "wrap-up": {
+      "status": "Draft",
+      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "approval": "pending-human"
+    },
+    "project-wiki": {
+      "status": "Not Applicable",
+      "reason": "复用 docs/wiki/architecture.md，不另建切片级 Wiki"
+    },
+    "stitch-prototype": {
+      "status": "Not Applicable",
+      "reason": "本次采用标准 HTML 原型"
+    }
+  }
+}
