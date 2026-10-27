@@ -21,3 +21,5 @@ data/characters/*
 !data/characters/Kimi/
 !data/characters/Kimi/**
 !data/characters/README-mascots.md
+
+.codegraph/
