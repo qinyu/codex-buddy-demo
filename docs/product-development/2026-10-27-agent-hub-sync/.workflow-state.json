@@ -1,56 +1,56 @@
 {
   "schema_version": 1,
   "run_mode": "stage-gated",
-  "current_stage": "develop",
+  "current_stage": "clarify",
   "stages": {
     "clarify": {
       "status": "Draft",
-      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "reason": "待人工确认需求边界",
       "approval": "pending-human"
     },
     "prd": {
       "status": "Draft",
-      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "reason": "第一次对抗审查后待人工批准",
       "approval": "pending-human"
     },
     "prototype": {
       "status": "Draft",
-      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "reason": "原型待人工确认",
       "approval": "pending-human"
     },
     "technical-solution": {
       "status": "Draft",
-      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "reason": "技术方案待人工确认",
       "approval": "pending-human"
     },
     "test-cases": {
       "status": "Draft",
-      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "reason": "测试用例待人工确认",
       "approval": "pending-human"
     },
     "test-automation": {
       "status": "Draft",
-      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "reason": "自动化范围待人工确认；设备验证不适用主机环境",
       "approval": "pending-human"
     },
     "development-plan": {
       "status": "Draft",
-      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "reason": "第二次对抗审查后待人工批准",
       "approval": "pending-human"
     },
     "start-implement": {
       "status": "Draft",
-      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "reason": "开工前检查已准备，执行方式尚未批准",
       "approval": "pending-human"
     },
     "develop": {
       "status": "Draft",
-      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "reason": "只记录基线测试；新增实现尚未开始",
       "approval": "pending-human"
     },
     "wrap-up": {
       "status": "Draft",
-      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "reason": "收工证据与人工验收尚未完成",
       "approval": "pending-human"
     },
     "project-wiki": {
