@@ -1,0 +1,5 @@
+interface:
+  display_name: "Ask Product Workflow"
+  short_description: "Which product workflow skill to run"
+policy:
+  allow_implicit_invocation: false
