@@ -1,0 +1,18 @@
+[stdin]:1
+const fs=require('fs');const plan=fs.readFileSync('docs/product-development/2026-10-28-multi-agent-stick-status/automation-test-plan.md','utf8');const cases=fs.readFileSync('docs/product-development/2026-10-28-multi-agent-stick-status/test-cases.md','utf8');for(let n=1;n<=26;n++){const id=`TC-${String(n).padStart(3,'0')}`;if(!cases.includes(id)||!plan.includes(id))throw Error('missing coverage '+id)}for(let n=1;n<=7;n++){const id=`AUTO-TASK-${String(n).padStart(3,'0')}`;if(!plan.includes(id))throw Error('missing '+id)}for(const token of ['AUTO-AREA-001','AC-001','AC-010','DSH','request ID','local','CI','人工'])if(!plan.includes(token))throw Error('missing plan section '+token);console.log('TC-001..TC-026 referenced; AUTO-TASK-001..007 present; critical coverage markers present')
+                                                                                                                                                                                                                                                                                                                                                                               ^
+
+Error: missing coverage TC-002
+    at [stdin]:1:374
+    at runScriptInThisContext (node:internal/vm:219:10)
+    at node:internal/process/execution:451:12
+    at [stdin]-wrapper:6:24
+    at runScriptInContext (node:internal/process/execution:449:60)
+    at evalFunction (node:internal/process/execution:283:30)
+    at evalTypeScript (node:internal/process/execution:295:3)
+    at node:internal/main/eval_stdin:51:5
+    at ReadStream.<anonymous> (node:internal/process/execution:205:5)
+    at ReadStream.emit (node:events:514:28)
+
+Node.js v24.21.0
+coverage-check exit=1

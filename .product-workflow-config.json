@@ -1,17 +1,17 @@
 {
   "schema_version": 1,
-  "project_root": "/Users/qinyu/.worktrees/haitian-pw/guides-demo/artifacts/guide-production/codex-buddy/stage-0/empty",
+  "project_root": "/Users/qinyu/.worktrees/haitian-pw/guides-demo/artifacts/guide-production/codex-buddy/full/code",
   "profile_path": "docs/product-workflow/project-profile.md",
   "freshness": {
-    "generated_at": "2026-10-27T20:51:41Z",
-    "git_commit": "960e5fe7ebf54d8b0d23e919b0f6d893fef18fa5"
+    "generated_at": "2026-10-27T21:58:53Z",
+    "git_commit": "f0310834aad84c55bbe3ab38a3ed5e2e1e8d7461"
   },
   "workflow_policy": {
     "config_strength": "strong_with_explicit_override",
     "domain_role": "未确认",
-    "product_mode": "unknown",
+    "product_mode": "one_to_n",
     "clarification_style": "single_question",
-    "mode_detection": "inferred_unconfirmed",
+    "mode_detection": "explicit",
     "project_wiki": "optional",
     "repo_wiki": "prefer_existing_or_generate_missing",
     "code_exploration": "required",
@@ -32,7 +32,6 @@
     }
   },
   "open_questions": [
-    "项目领域角色待用户确认。",
-    "产品模式目前为 unknown；可根据后续证据推断，但在用户确认前保持 inferred_unconfirmed。"
+    "项目领域角色待用户确认。"
   ]
 }

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StickS3 · 多助手状态原型</title>
+<style>
+:root{color-scheme:dark;--ink:#e7e7d5;--dim:#89918b;--bg:#101513;--screen:#111916;--panel:#202824;--hot:#ff553a;--green:#69e3a2;--line:#37423d;--yellow:#f2cd70}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 36%,#28332c 0,#151d19 38%,#0d1210 78%);color:var(--ink);font:15px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;display:grid;place-items:center;padding:28px 16px}
+button{font:inherit;color:inherit;cursor:pointer}button:focus-visible,select:focus-visible{outline:2px solid var(--yellow);outline-offset:3px}.stage{width:min(100%,760px);display:grid;grid-template-columns:minmax(230px,290px) minmax(250px,1fr);gap:clamp(24px,6vw,64px);align-items:center}.device-wrap{display:grid;justify-items:center;gap:14px}.device{width:min(100%,270px);aspect-ratio:135/240;border:8px solid #66716c;border-radius:31px;background:#09100d;box-shadow:inset 0 0 0 2px #26302b,0 20px 60px #0009;position:relative;padding:7px}.screen{width:100%;height:100%;background:var(--screen);overflow:hidden;position:relative;border-radius:16px;padding:8px;display:flex;flex-direction:column}.top{display:flex;justify-content:space-between;color:var(--dim);font-size:9px;line-height:1.25}.top strong{display:block;color:#e2e7d9;font-size:10px;font-weight:600;letter-spacing:.08em}.top .state{color:var(--green);text-align:right}.pet{height:67px;display:grid;place-items:center;position:relative;color:#c4f5b2}.pet:before{content:"";position:absolute;width:56px;height:43px;border-radius:46% 46% 38% 38%;background:#283d31;box-shadow:inset 0 -4px #1a2a21,0 0 25px #76e89b19}.eyes{z-index:1;letter-spacing:15px;padding-left:15px;color:var(--green);font-size:12px}.pet:after{content:"";position:absolute;width:29px;height:12px;border-radius:50%;border-bottom:2px solid #9fe5ae;top:44px;z-index:1}.identity{border-top:1px solid #29332e;border-bottom:1px solid #29332e;padding:6px 0 7px;margin-bottom:6px}.identity .name{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.identity .project{font-size:13px;color:var(--ink);margin:1px 0}.identity .sid{font-size:9px;color:var(--dim);display:flex;justify-content:space-between}.identity .status{color:var(--hot);font-size:10px;letter-spacing:.1em;margin-top:4px}.identity[data-status="IDLE"] .status{color:var(--dim)}.identity[data-status="DONE"] .status{color:var(--green)}.identity[data-status="UNKNOWN"] .status{color:var(--yellow)}.meters{margin-top:auto;border-top:1px solid #29332e;padding-top:5px}.meter-title{font-size:9px;color:var(--dim);display:flex;justify-content:space-between;margin-bottom:4px}.meter{display:grid;grid-template-columns:18px 1fr 26px;gap:5px;align-items:center;height:15px;font-size:8px;color:var(--dim)}.bar{height:5px;background:#303b35;border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;width:67%;background:var(--green);border-radius:9px}.bar.second i{width:31%;background:#e8bd63}.meter b{font-size:8px;font-weight:400;text-align:right}.page{font-size:8px;color:var(--dim);text-align:center;padding-top:4px}.prompt{position:absolute;inset:auto 0 0;background:#202824;border-top:1px solid #526158;padding:7px 8px 8px;min-height:96px}.prompt .eyebrow{font-size:9px;color:var(--dim);display:flex;justify-content:space-between}.prompt .source{font-size:10px;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.prompt .tool{font-size:14px;color:#f0eee1;margin-top:1px}.prompt .hint{font-size:9px;color:#a9b1aa;max-height:24px;overflow:hidden}.prompt .actions{display:flex;justify-content:space-between;font-size:9px;margin-top:8px}.approve{color:var(--green)}.deny{color:var(--hot)}.native{color:var(--yellow);font-size:10px;margin-top:8px}.device-keys{display:flex;gap:13px}.key{border:1px solid #59645e;background:#222c27;color:#c9d0ca;border-radius:9px;padding:7px 11px;font-size:10px;min-width:91px}.key span{color:var(--dim)}
+.controls{max-width:350px}.kicker{font-size:10px;letter-spacing:.16em;color:var(--green);text-transform:uppercase}.controls h1{font:500 clamp(25px,4vw,34px)/1.1 ui-monospace,monospace;letter-spacing:-.06em;margin:10px 0 8px}.controls p{font:13px/1.55 system-ui,sans-serif;color:#aab4ad;margin:0 0 20px}.control-label{display:block;color:var(--dim);font-size:10px;text-transform:uppercase;letter-spacing:.12em;margin:16px 0 7px}.select{width:100%;background:#1c2520;color:var(--ink);border:1px solid #3d4a42;border-radius:8px;padding:10px 12px;font:13px ui-monospace,monospace}.actions{display:flex;gap:8px;flex-wrap:wrap}.ctrl{background:transparent;border:1px solid #536159;border-radius:7px;padding:9px 11px;font-size:11px;transition:background .15s,border-color .15s}.ctrl:hover{background:#26342c;border-color:#89a393}.ctrl.primary{background:var(--green);color:#142019;border-color:var(--green);font-weight:700}.ctrl:disabled{opacity:.4;cursor:not-allowed}.queue{margin-top:18px;border-top:1px solid #37423d;padding-top:13px;font-size:11px;color:#aab4ad;min-height:62px}.queue b{color:var(--ink);font-weight:500}.notice{min-height:20px;margin-top:10px;color:var(--yellow);font-size:10px}.boundary{font:10px/1.5 system-ui,sans-serif;color:#8e9991;margin-top:14px;max-width:340px}.kbd{color:#e7e7d5}.review-link{color:#91b9a1;font-size:10px;margin-top:10px;display:inline-block}.review-notes{grid-column:1/-1;border-top:1px solid #37423d;padding-top:12px;color:#9ba79f;font:11px/1.6 system-ui,sans-serif}.review-notes summary{cursor:pointer;color:#bec9c0}.review-notes p{max-width:760px}
+@media(max-width:620px){body{padding:18px 14px 28px}.stage{grid-template-columns:1fr;gap:24px}.device{width:min(58vw,246px)}.controls{width:min(100%,390px);margin:auto}.controls h1{font-size:26px}.device-wrap{gap:10px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="stage">
+  <section class="device-wrap" aria-label="StickS3 屏幕模拟">
+    <div class="device"><div class="screen" id="screen">
+      <div class="top"><div><strong>CODEX BUDDY</strong><span id="live">LIVE · BRIDGE</span></div><div class="state" id="connection">BLE<br>READY</div></div>
+      <div class="pet" aria-hidden="true"><span class="eyes">● ●</span></div>
+      <div class="identity" id="identity" data-status="BUSY">
+        <div class="name" id="assistant">CODEX</div><div class="project" id="project">codex-buddy</div><div class="sid"><span id="session">S:A71C</span><span id="position">1 / 3</span></div><div class="status" id="status">BUSY · 工作中</div>
+      </div>
+      <div class="meters"><div class="meter-title"><span>CODEX USAGE</span><span>LIVE</span></div><div class="meter"><span>5H</span><div class="bar"><i></i></div><b>67%</b></div><div class="meter"><span>WK</span><div class="bar second"><i></i></div><b>31%</b></div></div>
+      <div class="page" id="page">A×2 / B · SESSION 1 OF 3</div>
+      <div class="prompt" id="prompt" hidden></div>
+    </div></div>
+    <div class="device-keys"><button class="key" id="prev" aria-label="上一会话">A <span>上一条</span></button><button class="key" id="next">A×2 <span>下一会话</span></button><button class="key" id="openQueue">B <span>待确认</span></button></div>
+  </section>
+  <section class="controls" aria-label="原型操作">
+    <div class="kicker">StickS3 / 135 × 240</div>
+    <h1>多助手，<br>各自有迹。</h1>
+    <p>像握着设备一样浏览会话与逐条确认。保留现有额度仪表、角色区、会话页码和 A/B 审批 overlay。</p>
+    <label class="control-label" for="sessionSelect">当前会话</label>
+    <select class="select" id="sessionSelect" aria-label="选择助手会话"></select>
+    <label class="control-label">状态演示</label>
+    <div class="actions"><button class="ctrl" data-state="BUSY">工作中</button><button class="ctrl" data-state="IDLE">空闲</button><button class="ctrl" data-state="DONE">已完成</button><button class="ctrl" data-state="UNKNOWN">未知 / 离线</button></div>
+    <label class="control-label">待确认队列 · <span id="queueCount">2</span></label>
+    <div class="actions"><button class="ctrl primary" id="reviewRequest">查看当前请求</button><button class="ctrl" id="expireRequest">模拟失效 / 撤销</button><button class="ctrl" id="toggleEmpty">清空队列 / 恢复样例</button></div>
+    <div class="queue" id="queueText" aria-live="polite"><b>1 / 2</b>　Codex · codex-buddy · A71C<br>Write file · 更新本地配置文件</div>
+    <div class="actions"><button class="ctrl primary" id="approve">A · 批准</button><button class="ctrl" id="deny">B · 拒绝</button><button class="ctrl" id="disconnect">切换 BLE 离线</button></div>
+    <div class="notice" id="notice" role="status" aria-live="polite"></div>
+    <div class="boundary">仅模拟固件屏幕交互；这些样例不证明真实 bridge、助手 adapter、DSH 接入或设备决策闭环已验证。只有 Codex 样例显示 A/B；其他来源明确回原生界面。摘要为合成数据。</div>
+    <a class="review-link" href=".review-board/index.html#prototype">返回评审看板</a>
+  </section>
+</main>
+<details id="review" class="review-notes"><summary>评审覆盖与边界</summary><p>复用 src/main.cpp 的 135×240 竖屏、角色区、用量区、会话页码、实体 A/B 语义和审批 overlay；复用 src/data.h 的 agent 与 index/count 语义。无 PRODUCT.md、DESIGN.md 或 impeccable，未新增设计系统。覆盖 PRD 原型约束：轮播两条 Codex 会话；逐条 Codex 可决策与非闭环助手原生 UI 提示；请求超时/撤销推进；未知项目、运行期短号、离线、空 roster。当前原型模拟，不证明 bridge、真实 DSH adapter、物理按键、BLE 或实际决策闭环。待评审：未知状态在真实固件字体/字符宽度中的落位；真实 roster 与现有 agent index packet 的兼容；实际设备上的横竖屏容量。</p></details>
+<script>
+const sessions=[
+ {assistant:'CODEX',project:'codex-buddy',sid:'S:A71C',state:'BUSY',label:'工作中'},
+ {assistant:'CODEX',project:'stick-agent-hub',sid:'S:19D2',state:'BUSY',label:'工作中'},
+ {assistant:'PI',project:'未知项目',sid:'RUN:03',state:'ATTN',label:'需确认'},
+ {assistant:'HERMES',project:'firmware-lab',sid:'S:8B20',state:'IDLE',label:'空闲'},
+ {assistant:'CURSOR',project:'未知项目',sid:'RUN:04',state:'UNKNOWN',label:'状态未知'},
+ {assistant:'DSH',project:'agent-bridge',sid:'S:DD42',state:'DONE',label:'已完成'}
+];
+const requests=[
+ {assistant:'CODEX',project:'codex-buddy',sid:'A71C',tool:'Write file',hint:'更新本地配置文件',device:true},
+ {assistant:'PI',project:'未知项目',sid:'RUN:03',tool:'待确认',hint:'请回 Pi 原生界面确认',device:false}
+];
+let index=0,requestIndex=0,queueVisible=true,connected=true,showPrompt=false;const $=id=>document.getElementById(id);
+function renderSession(){const s=sessions[index];$('assistant').textContent=s.assistant;$('project').textContent=s.project;$('session').textContent=s.sid;$('position').textContent=`${index+1} / ${sessions.length}`;$('page').textContent=`A×2 / B · SESSION ${index+1} OF ${sessions.length}`;$('status').textContent=`${s.state} · ${s.label}`;$('identity').dataset.status=s.state;$('live').textContent=connected?'LIVE · BRIDGE':'WAIT · OFFLINE';$('connection').innerHTML=connected?'BLE<br>READY':'BLE<br>OFFLINE';$('connection').style.color=connected?'var(--green)':'var(--hot)';$('sessionSelect').value=String(index);renderPrompt()}
+function renderPrompt(){const p=$('prompt');p.hidden=!showPrompt||!queueVisible||requests.length===0;if(p.hidden){$('approve').disabled=true;$('deny').disabled=true;$('queueCount').textContent=requests.length;if(requests.length===0)$('queueText').innerHTML='<b>队列为空</b>　没有待确认请求';return}const r=requests[requestIndex];p.innerHTML=`<div class="eyebrow"><span>NEED CONFIRM · ${requestIndex+1}/${requests.length}</span><span>00:08</span></div><div class="source">${r.assistant} · ${r.project} · ${r.sid}</div><div class="tool">${r.tool}</div><div class="hint">${r.hint}</div>${r.device?'<div class="actions"><span class="approve">A: accept</span><span class="deny">B: cancel</span></div>':'<div class="native">回 '+r.assistant+' 原生界面确认 · 无设备决策</div>'}`;$('approve').disabled=!r.device;$('deny').disabled=!r.device;$('queueText').innerHTML=`<b>${requestIndex+1} / ${requests.length}</b>　${r.assistant} · ${r.project} · ${r.sid}<br>${r.tool} · ${r.hint}`;$('queueCount').textContent=requests.length}
+function decision(value){if(!showPrompt||!queueVisible||!requests[requestIndex]?.device)return;$('notice').textContent=`${requests[requestIndex].assistant} 请求已模拟${value}；只作用于当前条目。` ;requests.splice(requestIndex,1);if(requestIndex>=requests.length)requestIndex=0;showPrompt=requests.length>0;renderPrompt()}
+sessions.forEach((s,i)=>{const o=document.createElement('option');o.value=i;o.textContent=`${s.assistant} · ${s.project} · ${s.sid}`;$('sessionSelect').append(o)});
+$('sessionSelect').addEventListener('change',e=>{index=Number(e.target.value);renderSession()});$('next').onclick=()=>{index=(index+1)%sessions.length;renderSession()};$('prev').onclick=()=>{index=(index+sessions.length-1)%sessions.length;renderSession()};$('openQueue').onclick=$('reviewRequest').onclick=()=>{showPrompt=true;renderPrompt()};document.querySelectorAll('[data-state]').forEach(b=>b.onclick=()=>{sessions[index].state=b.dataset.state;sessions[index].label={BUSY:'工作中',IDLE:'空闲',DONE:'已完成',UNKNOWN:'状态未知'}[b.dataset.state];renderSession()});$('approve').onclick=()=>decision('批准');$('deny').onclick=()=>decision('拒绝');$('expireRequest').onclick=()=>{if(requests.length){requests.splice(requestIndex,1);requestIndex=0;showPrompt=requests.length>0;$('notice').textContent='当前请求已失效 / 撤销，旧按键不会作用于下一条。';renderPrompt()}};$('toggleEmpty').onclick=()=>{showPrompt=false;if(requests.length){requests.length=0;$('queueCount').textContent='0';$('queueText').innerHTML='<b>队列为空</b>　没有待确认请求'}else{requests.push({assistant:'CODEX',project:'codex-buddy',sid:'A71C',tool:'Write file',hint:'更新本地配置文件',device:true},{assistant:'PI',project:'未知项目',sid:'RUN:03',tool:'待确认',hint:'请回 Pi 原生界面确认',device:false});$('queueCount').textContent=requests.length;$('queueText').innerHTML='<b>1 / 2</b>　Codex · codex-buddy · A71C<br>Write file · 更新本地配置文件'}requestIndex=0;renderPrompt()};$('disconnect').onclick=()=>{connected=!connected;$('disconnect').textContent=connected?'切换 BLE 离线':'恢复 BLE 连接';$('notice').textContent=connected?'BLE 已恢复（模拟）。':'BLE 断开：保留 WAIT，不默认批准。';renderSession()};renderSession();
+</script>
+</body>
+</html>
