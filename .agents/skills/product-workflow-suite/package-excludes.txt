@@ -1,0 +1,7 @@
+_dev/**
+tests/**
+scripts/**
+evals/room/**
+evals/reports/**
+evals/logs/**
+**/.DS_Store
