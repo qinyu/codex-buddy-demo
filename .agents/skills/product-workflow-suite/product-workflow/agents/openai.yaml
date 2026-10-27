@@ -1,0 +1,5 @@
+interface:
+  display_name: "Product Workflow"
+  short_description: "Run the full product workflow when named"
+policy:
+  allow_implicit_invocation: false
