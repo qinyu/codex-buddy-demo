@@ -1,0 +1,18 @@
+# UTF-8 no BOM. Example wrapper for Windows native.
+# Copy commands from the stack reference; do not execute this file as-is.
+$ErrorActionPreference = 'Stop'
+$Root = Resolve-Path (Join-Path $PSScriptRoot '..\..\..\..')
+if (-not (Test-Path $Root)) { throw "repo root not found: $Root" }
+Set-Location $Root
+
+function Invoke-WinCmd([string]$Name, [string[]]$Args) {
+  $cmd = Get-Command "$Name.cmd" -ErrorAction SilentlyContinue
+  if ($cmd) { & $cmd.Source @Args; return }
+  $exe = Get-Command $Name -ErrorAction SilentlyContinue
+  if ($exe) { & $exe.Source @Args; return }
+  throw "command not found: $Name / $Name.cmd"
+}
+
+# Example: Invoke-WinCmd mvn @('test')
+# Example: Invoke-WinCmd npm @('test','--','--coverage')
+Write-Host "Replace this stub with the stack command sequence from references/*.md"

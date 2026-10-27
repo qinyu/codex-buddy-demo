@@ -1,0 +1,10 @@
+interface:
+  display_name: "Product Review"
+  short_description: "Adversarial review of PRD and development plan"
+  default_prompt: >-
+    对抗审查当前切片的 prd.md 或 development-plan.md。
+    先认切片：用户给的路径 → 当前目录是切片 → docs/product-development/ 下恰好一个 → 否则列出问我。
+    钉死后读那份 md、直接上游和本 skill 的 references/checklist.md，结论写进同一份的 ## 对抗审查。
+    本会话就是审查会话，不要再开一层 reviewer。找不到切片就停下来问，不要空转。
+policy:
+  allow_implicit_invocation: true

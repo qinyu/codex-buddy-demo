@@ -1,0 +1,73 @@
+{
+  "workflowType": "product_workflow",
+  "manifestVersion": "2026.09.14",
+  "parserVersion": "2026.05.19",
+  "phases": [
+    {
+      "key": "product_definition",
+      "label": "Product Definition",
+      "stages": ["clarification", "prd", "prototype"]
+    },
+    {
+      "key": "design_implementation",
+      "label": "Design and Implementation",
+      "stages": ["api_contract", "technical_solution", "development_plan"]
+    },
+    {
+      "key": "verification_delivery",
+      "label": "Verification and Delivery",
+      "stages": ["test_cases"]
+    }
+  ],
+  "artifacts": [
+    {
+      "artifactKey": "intent",
+      "label": "Intent",
+      "sourceFiles": ["clarify.md", "clarification.md"],
+      "required": true,
+      "contentType": "text/markdown"
+    },
+    {
+      "artifactKey": "spec",
+      "label": "Spec",
+      "sourceFiles": ["prd.md"],
+      "required": true,
+      "contentType": "text/markdown"
+    },
+    {
+      "artifactKey": "prototype",
+      "label": "Prototype and Design Review",
+      "sourceFiles": ["prototype.html", "design-review.md"],
+      "required": false,
+      "contentType": "text/html"
+    },
+    {
+      "artifactKey": "api",
+      "label": "API Contract",
+      "sourceFiles": ["api-contract.md"],
+      "required": false,
+      "contentType": "text/markdown"
+    },
+    {
+      "artifactKey": "architecture",
+      "label": "Architecture",
+      "sourceFiles": ["technical-solution.md"],
+      "required": true,
+      "contentType": "text/markdown"
+    },
+    {
+      "artifactKey": "plan",
+      "label": "Plan",
+      "sourceFiles": ["development-plan.md"],
+      "required": true,
+      "contentType": "text/markdown"
+    },
+    {
+      "artifactKey": "test",
+      "label": "Test",
+      "sourceFiles": ["test-cases.md"],
+      "required": true,
+      "contentType": "text/markdown"
+    }
+  ]
+}
