@@ -1,72 +1,56 @@
 {
   "schema_version": 1,
   "run_mode": "stage-gated",
-  "current_stage": "develop",
+  "current_stage": "clarify",
   "stages": {
     "clarify": {
-      "status": "Reviewed",
-      "reviewed_by": "recording-script",
-      "reviewed_at": "2026-10-27T21:00:32.651Z",
-      "review_source": "scripts/rehearse-codex-buddy.mjs",
-      "reason": "录制时模拟的人工确认，不是独立真人审批"
+      "status": "Draft",
+      "reason": "待人工确认需求边界",
+      "approval": "pending-human"
     },
     "prd": {
-      "status": "Reviewed",
-      "reviewed_by": "recording-script",
-      "reviewed_at": "2026-10-27T21:00:32.651Z",
-      "review_source": "scripts/rehearse-codex-buddy.mjs",
-      "reason": "录制时模拟的人工确认，不是独立真人审批"
+      "status": "Draft",
+      "reason": "第一次对抗审查后待人工批准",
+      "approval": "pending-human"
     },
     "prototype": {
-      "status": "Reviewed",
-      "reviewed_by": "recording-script",
-      "reviewed_at": "2026-10-27T21:00:32.651Z",
-      "review_source": "scripts/rehearse-codex-buddy.mjs",
-      "reason": "录制时模拟的人工确认，不是独立真人审批"
+      "status": "Draft",
+      "reason": "原型待人工确认",
+      "approval": "pending-human"
     },
     "technical-solution": {
-      "status": "Reviewed",
-      "reviewed_by": "recording-script",
-      "reviewed_at": "2026-10-27T21:00:32.651Z",
-      "review_source": "scripts/rehearse-codex-buddy.mjs",
-      "reason": "录制时模拟的人工确认，不是独立真人审批"
+      "status": "Draft",
+      "reason": "技术方案待人工确认",
+      "approval": "pending-human"
     },
     "test-cases": {
-      "status": "Reviewed",
-      "reviewed_by": "recording-script",
-      "reviewed_at": "2026-10-27T21:00:32.651Z",
-      "review_source": "scripts/rehearse-codex-buddy.mjs",
-      "reason": "录制时模拟的人工确认，不是独立真人审批"
+      "status": "Draft",
+      "reason": "测试用例待人工确认",
+      "approval": "pending-human"
     },
     "test-automation": {
-      "status": "Reviewed",
-      "reviewed_by": "recording-script",
-      "reviewed_at": "2026-10-27T21:00:32.651Z",
-      "review_source": "scripts/rehearse-codex-buddy.mjs",
-      "reason": "录制时模拟的人工确认，不是独立真人审批"
+      "status": "Draft",
+      "reason": "自动化范围待人工确认；设备验证不适用主机环境",
+      "approval": "pending-human"
     },
     "development-plan": {
-      "status": "Reviewed",
-      "reviewed_by": "recording-script",
-      "reviewed_at": "2026-10-27T21:00:32.651Z",
-      "review_source": "scripts/rehearse-codex-buddy.mjs",
-      "reason": "录制时模拟的人工确认，不是独立真人审批"
+      "status": "Draft",
+      "reason": "第二次对抗审查后待人工批准",
+      "approval": "pending-human"
     },
     "start-implement": {
-      "status": "Reviewed",
-      "reviewed_by": "recording-script",
-      "reviewed_at": "2026-10-27T21:00:32.651Z",
-      "review_source": "scripts/rehearse-codex-buddy.mjs",
-      "reason": "录制时模拟的人工确认，不是独立真人审批"
+      "status": "Draft",
+      "reason": "开工前检查已准备，执行方式尚未批准",
+      "approval": "pending-human"
     },
     "develop": {
       "status": "Draft",
-      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "reason": "只记录基线测试；新增实现尚未开始",
       "approval": "pending-human"
     },
     "wrap-up": {
       "status": "Draft",
-      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "reason": "收工证据与人工验收尚未完成",
       "approval": "pending-human"
     },
     "project-wiki": {
