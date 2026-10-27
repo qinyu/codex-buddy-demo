@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "run_mode": "lite",
+  "current_stage": "develop",
+  "workflow_policy": {
+    "product_mode": "one_to_n",
+    "mode_detection": "user_confirmed",
+    "portal_sync": "off"
+  },
+  "explicit_overrides": [
+    {
+      "policy": "workflow_policy.test_automation=required",
+      "reason": "本需求按用户确认的 lite 范围仅新增纯 Python 格式化函数及对应单元测试，不开展额外测试自动化阶段。",
+      "risk": "未增加独立自动化测试设施或 CI 覆盖；本地单测仍覆盖本次新行为。",
+      "recovery": "后续统一测试自动化方案纳入该函数并复核覆盖。"
+    }
+  ],
+  "stages": {
+    "clarify": { "status": "Not Applicable", "reason": "目标文件、调用边界、固件排除范围和测试要求已由用户明确。" },
+    "prd": { "status": "Reviewed", "reviewed_by": "用户", "reviewed_at": "2026-10-28" },
+    "project-wiki": { "status": "Not Applicable", "reason": "复用现有 repo wiki，无需切片级 wiki。" },
+    "prototype": { "status": "Not Applicable", "reason": "无界面或交互改动。" },
+    "stitch-prototype": { "status": "Not Applicable", "reason": "无界面或交互改动。" },
+    "test-cases": { "status": "Not Applicable", "reason": "单元测试直接验证纯函数验收规则，无需独立测试用例产物。" },
+    "test-automation": { "status": "Not Applicable", "reason": "按显式覆盖仅使用现有 Python 单测入口；详见 PRD explicit_override。" },
+    "technical-solution": { "status": "Not Applicable", "reason": "单文件纯函数，无新模块、接口或数据边界变化。" },
+    "development-plan": { "status": "Draft" },
+    "start-implement": { "status": "Not Applicable", "reason": "lite 切片在 PRD 与短计划批准后直接执行。" },
+    "develop": { "status": "Draft" },
+    "wrap-up": { "status": "Not Generated", "reason": "实现后执行收尾。" }
+  }
+}

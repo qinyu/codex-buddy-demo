@@ -750,6 +750,21 @@ def roll_reset_at(reset_at: int, window_sec: int, now: int) -> int:
     return reset_at + windows_elapsed * window_sec
 
 
+def format_reset_countdown(seconds: int) -> str:
+    if seconds < 0:
+        if seconds > -60:
+            return "overdue less than 1m"
+        overdue_minutes = (-seconds + 59) // 60
+        return f"overdue {overdue_minutes}m"
+    if seconds == 0:
+        return "now"
+    if seconds > 86400:
+        return f"{seconds // 86400}d {seconds // 3600 % 24:02d}h"
+    if seconds > 3600:
+        return f"{seconds // 3600}h {seconds // 60 % 60:02d}m"
+    return f"{seconds // 60}m" if seconds >= 60 else "less than 1m"
+
+
 def reset_window_sec_for_label(label: str | None) -> int:
     key = str(label or "").strip().lower()
     if key == "5h":

@@ -8,6 +8,7 @@ import unittest
 from codex_usage_ble_bridge import (
     UsageSnapshot,
     bar_is_visible,
+    format_reset_countdown,
     map_provider_quota,
     normalize_reset_at,
     parse_balance_display,
@@ -19,6 +20,26 @@ from codex_usage_ble_bridge import (
 
 
 class ProviderQuotaMappingTests(unittest.TestCase):
+    def test_format_reset_countdown(self) -> None:
+        cases = (
+            (172801, "2d 00h"),
+            (86401, "1d 00h"),
+            (86400, "24h 00m"),
+            (7200, "2h 00m"),
+            (3601, "1h 00m"),
+            (3600, "60m"),
+            (61, "1m"),
+            (60, "1m"),
+            (1, "less than 1m"),
+            (0, "now"),
+            (-1, "overdue less than 1m"),
+            (-60, "overdue 1m"),
+            (-61, "overdue 2m"),
+        )
+        for seconds, expected in cases:
+            with self.subTest(seconds=seconds):
+                self.assertEqual(format_reset_countdown(seconds), expected)
+
     def test_openai_monthly_only(self) -> None:
         view = map_provider_quota({"monthlyPercent": 100, "monthlyResetAt": 1790229363})
         self.assertEqual(view.primary.percent, 100)
