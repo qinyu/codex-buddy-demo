@@ -12,10 +12,8 @@ Default roles: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human
 
 Single-context layout. See `docs/agents/domain.md`.
 
-<!-- BEGIN product-setup minimal -->
-## Setup 选择
+<!-- BEGIN product-workflow charter suite=v0.9.3 -->
+## product-workflow 套件规则
 
-- 本地仓库：https://github.com/qinyu/codex-buddy-demo.git。
-- 允许只读探查源码。
-- 基础 Wiki：docs/repo-wiki/index.md。
-<!-- END product-setup minimal -->
+完整章程由套件维护。代码探查、测试和原型策略见 .product-workflow-config.json。
+<!-- END product-workflow charter -->
