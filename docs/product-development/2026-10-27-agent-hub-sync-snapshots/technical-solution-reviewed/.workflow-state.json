@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "run_mode": "stage-gated",
+  "current_stage": "test-cases",
+  "stages": {
+    "clarify": {
+      "status": "Reviewed",
+      "reviewed_by": "recording-script",
+      "reviewed_at": "2026-10-27T21:47:09.614Z",
+      "review_source": "scripts/rehearse-codex-buddy.mjs",
+      "reason": "录制时模拟的人工确认，不是独立真人审批"
+    },
+    "prd": {
+      "status": "Reviewed",
+      "reviewed_by": "recording-script",
+      "reviewed_at": "2026-10-27T21:47:09.614Z",
+      "review_source": "scripts/rehearse-codex-buddy.mjs",
+      "reason": "录制时模拟的人工确认，不是独立真人审批"
+    },
+    "prototype": {
+      "status": "Reviewed",
+      "reviewed_by": "recording-script",
+      "reviewed_at": "2026-10-27T21:47:09.614Z",
+      "review_source": "scripts/rehearse-codex-buddy.mjs",
+      "reason": "录制时模拟的人工确认，不是独立真人审批"
+    },
+    "technical-solution": {
+      "status": "Reviewed",
+      "reviewed_by": "recording-script",
+      "reviewed_at": "2026-10-27T21:47:09.614Z",
+      "review_source": "scripts/rehearse-codex-buddy.mjs",
+      "reason": "录制时模拟的人工确认，不是独立真人审批"
+    },
+    "test-cases": {
+      "status": "Draft",
+      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "approval": "pending-human"
+    },
+    "test-automation": {
+      "status": "Draft",
+      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "approval": "pending-human"
+    },
+    "development-plan": {
+      "status": "Draft",
+      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "approval": "pending-human"
+    },
+    "start-implement": {
+      "status": "Draft",
+      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "approval": "pending-human"
+    },
+    "develop": {
+      "status": "Draft",
+      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "approval": "pending-human"
+    },
+    "wrap-up": {
+      "status": "Draft",
+      "reason": "本阶段交付物已生成，等待模拟人工确认",
+      "approval": "pending-human"
+    },
+    "project-wiki": {
+      "status": "Not Applicable",
+      "reason": "复用 docs/repo-wiki/architecture.md，不另建切片级 Wiki"
+    },
+    "stitch-prototype": {
+      "status": "Not Applicable",
+      "reason": "本次采用标准 HTML 原型"
+    }
+  }
+}
