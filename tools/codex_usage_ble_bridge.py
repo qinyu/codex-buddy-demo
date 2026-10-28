@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import contextlib
+import hashlib
 import json
 import re
 import select
@@ -411,21 +412,39 @@ class AgentHub:
 
     def ensure_agent(self, agent_id: str, payload: dict[str, Any] | None = None) -> HubAgent:
         aid = normalize_agent_id(agent_id) or "codex"
-        if aid not in self.agents:
-            self.agents[aid] = HubAgent(agent_id=aid, title=agent_title_for(aid, payload))
-            self.order.append(aid)
+        session_id = None
+        if payload:
+            raw_session_id = payload.get("session_id")
+            if isinstance(raw_session_id, str) and raw_session_id.strip():
+                session_id = raw_session_id.strip()
+        key = self._agent_key(aid, session_id)
+        if key not in self.agents:
+            self.agents[key] = HubAgent(
+                agent_id=aid,
+                title=agent_title_for(aid, payload),
+                session_id=session_id,
+            )
+            self.order.append(key)
             if self.current_id is None:
-                self.current_id = aid
+                self.current_id = key
                 self._rotate_started_at = time.time()
         elif payload:
-            self.agents[aid].title = agent_title_for(aid, payload)
-        return self.agents[aid]
+            self.agents[key].title = agent_title_for(aid, payload)
+        return self.agents[key]
+
+    @staticmethod
+    def _agent_key(agent_id: str, session_id: str | None = None) -> str:
+        if session_id is None:
+            return agent_id
+        return f"{agent_id}\0{session_id}"
 
     def drop_agent(self, agent_id: str) -> None:
-        aid = normalize_agent_id(agent_id) or agent_id
-        self.agents.pop(aid, None)
-        self.order = [x for x in self.order if x != aid]
-        if self.current_id == aid:
+        aid = agent_id if "\0" in agent_id else (normalize_agent_id(agent_id) or agent_id)
+        keys = [key for key, agent in self.agents.items() if key == aid or agent.agent_id == aid]
+        for key in keys:
+            self.agents.pop(key, None)
+        self.order = [key for key in self.order if key not in keys]
+        if self.current_id in keys:
             self.current_id = self.order[0] if self.order else None
             self._rotate_started_at = time.time()
 
@@ -452,15 +471,17 @@ class AgentHub:
         agent_id = resolve_agent_id(flat)
         mapped = state_from_hook_event(hook_event_name(flat))
         if mapped == "gone":
-            self.drop_agent(agent_id)
+            session = flat.get("session_id")
+            if isinstance(session, str) and session.strip():
+                self.drop_agent(self._agent_key(agent_id, session.strip()))
+            else:
+                self.drop_agent(agent_id)
             return None
 
         agent = self.ensure_agent(agent_id, flat)
         agent.from_hook = True
         agent.last_event_at = now
         session = flat.get("session_id")
-        if isinstance(session, str) and session.strip():
-            agent.session_id = session.strip()
 
         if mapped == "attention":
             agent.state = "attention"
@@ -482,6 +503,14 @@ class AgentHub:
     def note_codex_fallback(self, state: str, now: float | None = None) -> HubAgent | None:
         """Surface Codex only while Codex itself is active — not forever via meters."""
         now = time.time() if now is None else now
+        if any(
+            agent.agent_id == "codex"
+            and agent.from_hook
+            and agent.session_id
+            and is_recent(agent.last_event_at, self.busy_window, now)
+            for agent in self.agents.values()
+        ):
+            return None
         if state in {"busy", "attention", "completed"}:
             agent = self.ensure_agent("codex")
             if agent.from_hook and is_recent(agent.last_event_at, self.busy_window, now):
@@ -688,6 +717,8 @@ class UsageSnapshot:
     agent_id: str | None = None
     agent_index: int | None = None
     agent_count: int | None = None
+    sessions: list[dict[str, Any]] | None = None
+    sessions_page_index: int | None = None
 
     def packet(self, state: str) -> dict[str, Any]:
         now = int(time.time())
@@ -740,6 +771,46 @@ class UsageSnapshot:
         packet["agent_id"] = agent_id
         packet["agent_index"] = int(self.agent_index if self.agent_index is not None else 0)
         packet["agent_count"] = int(self.agent_count if self.agent_count is not None else 1)
+        if self.sessions is not None:
+            sessions = [session for session in self.sessions if isinstance(session, dict)]
+            page_size = 8
+            page_count = max(1, (len(sessions) + page_size - 1) // page_size)
+            requested_page = self.sessions_page_index
+            page_index = requested_page if isinstance(requested_page, int) and not isinstance(requested_page, bool) else 0
+            page_index = max(0, min(page_index, page_count - 1))
+            page_start = page_index * page_size
+            page_sessions = sessions[page_start : page_start + page_size]
+            short_ids = [str(session.get("short_id") or "未知会话") for session in page_sessions]
+            shortened_ids = [short_text(value, "未知会话", 12)[:12] for value in short_ids]
+            colliding = {value for value in shortened_ids if shortened_ids.count(value) > 1}
+            display_sessions: list[dict[str, str]] = []
+            for session, raw_short_id, short_id in zip(page_sessions, short_ids, shortened_ids):
+                if short_id in colliding:
+                    suffix = hashlib.sha256(raw_short_id.encode("utf-8")).hexdigest()[:6]
+                    short_id = f"{raw_short_id[:5]}-{suffix}"
+                display = {
+                    "agent": short_text(session.get("agent"), "AGENT", 12)[:12],
+                    "project": short_text(session.get("project"), "未知项目", 24)[:24],
+                    "short_id": short_id,
+                }
+                session_state = session.get("state")
+                if isinstance(session_state, str) and session_state in {
+                    "busy",
+                    "attention",
+                    "idle",
+                    "completed",
+                    "offline",
+                    "unknown",
+                }:
+                    display["state"] = session_state
+                else:
+                    display["state"] = "unknown"
+                display_sessions.append(display)
+            packet["sessions"] = display_sessions
+            packet["sessions_total"] = len(sessions)
+            if page_count > 1:
+                packet["sessions_page_index"] = page_index
+                packet["sessions_page_count"] = page_count
         return packet
 
 
@@ -2054,6 +2125,11 @@ class CodexApprovalProxy:
             decision = "cancel"
         else:
             print(f"[approval] unknown decision from StickS3: {raw_decision}", file=sys.stderr)
+            return
+
+        if prompt_id != self.active_prompt_id:
+            if self.args.verbose:
+                print(f"[approval] ignoring non-active prompt {prompt_id}", file=sys.stderr)
             return
 
         req = self._remove_pending(prompt_id)

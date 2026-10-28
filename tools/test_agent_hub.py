@@ -61,6 +61,139 @@ class AgentIdentityTests(unittest.TestCase):
 
 
 class AgentHubPacketTests(unittest.TestCase):
+    def test_two_sessions_from_same_agent_keep_independent_state(self) -> None:
+        hub = AgentHub(presence_window=600)
+        now = 1_700_000_000.0
+
+        first = hub.ingest_hook(
+            {
+                "client_kind": "codex",
+                "hook_event_name": "UserPromptSubmit",
+                "session_id": "cx-01",
+                "cwd": "/work/alpha",
+            },
+            now=now,
+        )
+        second = hub.ingest_hook(
+            {
+                "client_kind": "codex",
+                "hook_event_name": "PermissionRequest",
+                "session_id": "cx-02",
+                "cwd": "/work/beta",
+            },
+            now=now + 1,
+        )
+
+        self.assertIsNotNone(first)
+        self.assertIsNotNone(second)
+        sessions = {agent.session_id: agent for agent in hub.agents.values()}
+        self.assertEqual(set(sessions), {"cx-01", "cx-02"})
+        self.assertEqual(sessions["cx-01"].state, "busy")
+        self.assertEqual(sessions["cx-02"].state, "attention")
+
+    def test_session_end_removes_only_matching_same_agent_session(self) -> None:
+        hub = AgentHub(presence_window=600)
+        now = 1_700_000_100.0
+        hub.ingest_hook(
+            {
+                "client_kind": "codex",
+                "hook_event_name": "UserPromptSubmit",
+                "session_id": "cx-01",
+            },
+            now=now,
+        )
+        hub.ingest_hook(
+            {
+                "client_kind": "codex",
+                "hook_event_name": "UserPromptSubmit",
+                "session_id": "cx-02",
+            },
+            now=now + 1,
+        )
+
+        ended = hub.ingest_hook(
+            {
+                "client_kind": "codex",
+                "hook_event_name": "SessionEnd",
+                "session_id": "cx-02",
+            },
+            now=now + 2,
+        )
+
+        self.assertIsNone(ended)
+        remaining = list(hub.agents.values())
+        self.assertEqual(len(remaining), 1)
+        self.assertEqual(remaining[0].session_id, "cx-01")
+        self.assertEqual(remaining[0].state, "busy")
+
+    def test_missing_or_blank_session_id_keeps_legacy_agent_key(self) -> None:
+        hub = AgentHub(presence_window=600)
+        now = 1_700_000_200.0
+
+        missing = hub.ingest_hook(
+            {"client_kind": "codex", "hook_event_name": "UserPromptSubmit"},
+            now=now,
+        )
+        blank = hub.ingest_hook(
+            {
+                "client_kind": "codex",
+                "hook_event_name": "PermissionRequest",
+                "session_id": "   ",
+            },
+            now=now + 1,
+        )
+
+        self.assertIs(missing, blank)
+        self.assertEqual(list(hub.agents), ["codex"])
+        self.assertIsNone(blank.session_id)
+        self.assertEqual(blank.state, "attention")
+
+    def test_session_end_without_id_keeps_legacy_agent_wide_removal(self) -> None:
+        hub = AgentHub(presence_window=600)
+        now = 1_700_000_300.0
+        hub.ingest_hook(
+            {
+                "client_kind": "codex",
+                "hook_event_name": "UserPromptSubmit",
+                "session_id": "cx-01",
+            },
+            now=now,
+        )
+        hub.ingest_hook(
+            {
+                "client_kind": "codex",
+                "hook_event_name": "UserPromptSubmit",
+                "session_id": "cx-02",
+            },
+            now=now + 1,
+        )
+
+        hub.ingest_hook(
+            {"client_kind": "codex", "hook_event_name": "SessionEnd"},
+            now=now + 2,
+        )
+
+        self.assertEqual(hub.agents, {})
+
+    def test_codex_fallback_does_not_create_aggregate_entry_while_hook_session_is_recent(self) -> None:
+        hub = AgentHub(presence_window=600)
+        now = 1_700_000_400.0
+        session = hub.ingest_hook(
+            {
+                "client_kind": "codex",
+                "hook_event_name": "UserPromptSubmit",
+                "session_id": "cx-01",
+            },
+            now=now,
+        )
+
+        fallback = hub.note_codex_fallback("busy", now=now + 1)
+
+        self.assertIsNone(fallback)
+        self.assertEqual(len(hub.agents), 1)
+        self.assertIs(hub.agents[hub.current_id], session)
+        self.assertEqual(session.state, "busy")
+
     def test_interleaved_hooks_build_roster_and_packet_state(self) -> None:
         hub = AgentHub(busy_window=60, attention_window=120, completed_window=25, presence_window=600)
         now = 1_700_000_000.0
@@ -105,8 +238,8 @@ class AgentHubPacketTests(unittest.TestCase):
             now=now + 4,
         )
 
-        self.assertEqual(sorted(hub.agents), ["codex", "cursor", "dsh", "hermes", "pi"])
-        hub.current_id = "pi"
+        self.assertEqual(sorted(agent.agent_id for agent in hub.agents.values()), ["codex", "cursor", "dsh", "hermes", "pi"])
+        hub.current_id = next(key for key, agent in hub.agents.items() if agent.agent_id == "pi")
         snap = _snap()
         state = hub.apply_to_snapshot(snap, now=now + 5)
         self.assertEqual(state, "attention")
@@ -129,12 +262,12 @@ class AgentHubPacketTests(unittest.TestCase):
             {"client_kind": "pi", "hook_event_name": "UserPromptSubmit"},
             now=now,
         )
-        self.assertIn("dsh", hub.agents)
+        self.assertIn("dsh", {agent.agent_id for agent in hub.agents.values()})
         hub.ingest_hook(
             {"client_kind": "dsh", "hook_event_name": "SessionEnd"},
             now=now + 1,
         )
-        self.assertNotIn("dsh", hub.agents)
+        self.assertNotIn("dsh", {agent.agent_id for agent in hub.agents.values()})
         self.assertNotIn("dsh", hub.visible_ids(now=now + 1))
         self.assertIn("pi", hub.visible_ids(now=now + 1))
 
@@ -148,16 +281,16 @@ class AgentHubPacketTests(unittest.TestCase):
         self.assertEqual(hub.visible_ids(now=now + 1), ["hermes"])
         hub.tick(now=now + 40)
         self.assertEqual(hub.visible_ids(now=now + 40), [])
-        self.assertNotIn("hermes", hub.agents)
+        self.assertNotIn("hermes", {agent.agent_id for agent in hub.agents.values()})
 
     def test_idle_codex_fallback_does_not_pin_forever(self) -> None:
         hub = AgentHub(presence_window=30)
         now = 1_700_000_300.0
         hub.note_codex_fallback("busy", now=now)
-        self.assertIn("codex", hub.agents)
+        self.assertIn("codex", {agent.agent_id for agent in hub.agents.values()})
         hub.note_codex_fallback("idle", now=now + 1)  # must not refresh presence
         hub.prune(now=now + 40)
-        self.assertNotIn("codex", hub.agents)
+        self.assertNotIn("codex", {agent.agent_id for agent in hub.agents.values()})
 
     def test_agent_next_prev_updates_packet_index(self) -> None:
         hub = AgentHub(presence_window=600)
@@ -171,24 +304,24 @@ class AgentHubPacketTests(unittest.TestCase):
                 {"client_kind": kind, "source": "claude" if kind != "codex" else "codex", "hook_event_name": event},
                 now=now,
             )
-        hub.current_id = "codex"
+        hub.current_id = next(key for key, agent in hub.agents.items() if agent.agent_id == "codex")
         hub.advance("next", now=now + 1)
-        self.assertEqual(hub.current_id, "pi")
+        self.assertEqual(hub.agents[hub.current_id].agent_id, "pi")
         snap = _snap()
         hub.apply_to_snapshot(snap, now=now + 1)
-        packet = snap.packet(hub.agents["pi"].state)
+        packet = snap.packet(hub.agents[hub.current_id].state)
         self.assertEqual(packet["agent_id"], "pi")
         self.assertEqual(packet["agent_index"], 1)
         self.assertEqual(packet["agent_count"], 3)
         hub.advance("prev", now=now + 2)
-        self.assertEqual(hub.current_id, "codex")
+        self.assertEqual(hub.agents[hub.current_id].agent_id, "codex")
 
     def test_auto_rotate_prefers_busy_and_respects_manual_grace(self) -> None:
         hub = AgentHub(rotate_idle_sec=5, rotate_busy_sec=20, manual_grace_sec=30, presence_window=600)
         now = 1_700_000_300.0
         hub.ingest_hook({"client_kind": "codex", "source": "codex", "hook_event_name": "Stop"}, now=now)
         hub.ingest_hook({"client_kind": "pi", "hook_event_name": "UserPromptSubmit"}, now=now)
-        hub.current_id = "codex"
+        hub.current_id = next(key for key, agent in hub.agents.items() if agent.agent_id == "codex")
         hub._rotate_started_at = now
         # Idle dwell elapsed → rotate toward busy Pi.
         selected = hub.maybe_auto_rotate(now=now + 6)
