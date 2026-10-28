@@ -2,6 +2,7 @@
 #include <LittleFS.h>
 #include <stdarg.h>
 #include "ble_bridge.h"
+#include "reset_countdown.h"
 static void appRtcSynced(time_t localEpoch);
 #include "data.h"
 #include "buddy.h"
@@ -1104,51 +1105,19 @@ static uint16_t resetColor(uint32_t resetAt, const char* windowLabel, bool live,
 static void resetText(uint32_t resetAt, char* out, size_t len) {
   uint32_t now = 0;
   if (resetAt == 0 || !dataUtcNow(&now)) {
-    snprintf(out, len, "resets --");
+    formatResetCountdown(0, false, false, out, len);
     return;
   }
-
-  uint32_t left = resetAt > now ? resetAt - now : 0;
-  if (left == 0) {
-    snprintf(out, len, "reset soon");
-    return;
-  }
-  if (left >= 86400) {
-    snprintf(out, len, "resets in %lud %02luh",
-             (unsigned long)(left / 86400),
-             (unsigned long)((left / 3600) % 24));
-  } else if (left >= 3600) {
-    snprintf(out, len, "resets in %luh %02lum",
-             (unsigned long)(left / 3600),
-             (unsigned long)((left / 60) % 60));
-  } else {
-    snprintf(out, len, "resets in %lum", (unsigned long)(left / 60));
-  }
+  formatResetCountdown((int64_t)resetAt - (int64_t)now, true, false, out, len);
 }
 
 static void resetTimeText(uint32_t resetAt, char* out, size_t len) {
   uint32_t now = 0;
   if (resetAt == 0 || !dataUtcNow(&now)) {
-    out[0] = 0;
+    formatResetCountdown(0, false, true, out, len);
     return;
   }
-
-  uint32_t left = resetAt > now ? resetAt - now : 0;
-  if (left == 0) {
-    out[0] = 0;
-    return;
-  }
-  if (left >= 86400) {
-    snprintf(out, len, "%lud %02luh",
-             (unsigned long)(left / 86400),
-             (unsigned long)((left / 3600) % 24));
-  } else if (left >= 3600) {
-    snprintf(out, len, "%luh %02lum",
-             (unsigned long)(left / 3600),
-             (unsigned long)((left / 60) % 60));
-  } else {
-    snprintf(out, len, "%lum", (unsigned long)(left / 60));
-  }
+  formatResetCountdown((int64_t)resetAt - (int64_t)now, true, true, out, len);
 }
 
 static const char* usageTopTitle() {
@@ -1267,7 +1236,7 @@ static void drawUsageSlotOn(lgfx::v1::LGFXBase* dst, int x, int w, int y,
   const int resetY = barY + barH + 4;
   char rt[12];
   rt[0] = 0;
-  if (resetAt != 0) resetTimeText(resetAt, rt, sizeof(rt));
+  resetTimeText(resetAt, rt, sizeof(rt));
   if (rt[0]) {
     dst->setTextColor(resetColor(resetAt, windowLabel, live, p), p.bg);
     dst->drawString(rt, x, resetY);

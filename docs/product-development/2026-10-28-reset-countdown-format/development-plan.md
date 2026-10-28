@@ -18,7 +18,7 @@
 - **文件范围**：`src/main.cpp`、仅为共享纯格式化函数所需的局部内部头文件（预计 `src/reset_countdown.h`）、针对性测试 `tools/test_reset_countdown.cpp`。不得改 `src/data.h`、BLE 协议、显示布局、颜色逻辑或其他模块。
 - **Owner**：当前开发执行者；测试和固件入口保持单一 ownership，不并行实现。
 - **RED**：先新增边界测试，运行 `g++ -std=c++11 -Wall -Wextra -pedantic tools/test_reset_countdown.cpp -o /tmp/test_reset_countdown && /tmp/test_reset_countdown`。预期因格式化实现缺失/规则不符而失败；先确认失败来自 AC 对应断言，再改生产代码。
-- **边界测试预期**：剩余 `90061` 秒显示 `resets in 1d 1h`；`3661` 秒显示 `resets in 1h 1m`；`3600` 秒显示 `resets in 1h 0m`；`59` 秒与 `1` 秒都向上取整显示 `resets in 1m`；`0` 秒和负剩余秒数显示明确的已到点文案（沿用 `reset soon`）；无重置值、当前时间不可用或不可解析输入显示 `NA`。上述用例应覆盖 AC-001 至 AC-005。
+- **边界测试预期**：剩余 `90061` 秒显示 `resets in 1d 01h`；`3661` 秒显示 `resets in 1h 01m`；`3600` 秒显示 `resets in 1h 00m`；`59` 秒与 `1` 秒都向上取整显示 `resets in 1m`；`0` 秒和负剩余秒数显示明确的已到点文案（沿用 `reset soon`）；无重置值、当前时间不可用或不可解析输入显示 `NA`。上述用例应覆盖 AC-001 至 AC-005。
 - **GREEN**：实现可复用纯函数；对有效剩余秒数按天/小时/分钟格式化，不足一分钟向上取整；到点或负数明确显示已到点；不可用标志或无效输入显示 `NA`。更新两处现有格式入口使用同一规则，并保留合理的文本宽度约束。
 - **验证命令**：
   - 目的：倒计时格式边界测试；位置：仓库根目录。
@@ -37,6 +37,12 @@
     ```
     证据：PlatformIO 构建退出成功；依赖不可用或构建失败时记阻断/未通过，不扩大修复范围。
 - **风险/回滚**：界面可用字符宽度有限，最终文案应沿用当前紧凑格式；如果新函数导致编译或显示回归，回滚本 TASK 的实现和测试改动，保留已有额度数据逻辑。
+
+## 验证命令
+
+- C++ 倒计时边界测试；在仓库根目录执行 `g++ -std=c++11 -Wall -Wextra -pedantic tools/test_reset_countdown.cpp -o /tmp/test_reset_countdown && /tmp/test_reset_countdown`；成功标准是 AC-001 至 AC-005 表驱动断言通过，失败即阻断该任务。
+- Python 既有回归；在仓库根目录执行 `python3 -m unittest discover -s tools -p 'test_*.py'`；成功标准是已发现测试通过；若环境缺少 `serial` 等依赖，明确报告未完成并记录具体失败模块，不以其他测试通过代替全量成功。
+- StickS3 构建；在仓库根目录执行 `pio run -e m5stack-sticks3`；成功标准是 PlatformIO 报告该环境 `SUCCESS`。
 
 ## 顺序、职责与执行方式
 
