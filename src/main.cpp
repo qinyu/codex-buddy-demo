@@ -118,8 +118,6 @@ const uint32_t SCREEN_OFF_MS = 30000;
 bool     napping = false;
 uint32_t napStartMs = 0;
 uint32_t promptArrivedMs = 0;
-const uint32_t HOUR_SEC = 3600;
-const uint32_t DAY_SEC = 86400;
 
 // Face-down = Z-axis dominant and negative. Debounced so a toss doesn't count.
 static bool isFaceDown() {
@@ -1092,13 +1090,13 @@ static uint16_t resetColor(uint32_t resetAt, const char* windowLabel, bool live,
   if (left == 0) return HOT;
 
   if (strcmp(windowLabel, "7d") == 0) {
-    if (left > 4 * DAY_SEC) return GREEN;
-    if (left > 2 * DAY_SEC) return 0xFD20;
+    if (left > 4 * reset_countdown::kSecondsPerDay) return GREEN;
+    if (left > 2 * reset_countdown::kSecondsPerDay) return 0xFD20;
     return HOT;
   }
 
-  if (left > 3 * HOUR_SEC) return GREEN;
-  if (left > HOUR_SEC) return 0xFD20;
+  if (left > 3 * reset_countdown::kSecondsPerHour) return GREEN;
+  if (left > reset_countdown::kSecondsPerHour) return 0xFD20;
   return HOT;
 }
 
